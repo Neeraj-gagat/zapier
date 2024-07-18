@@ -1,10 +1,10 @@
-import {prismaClient} from "@prisma/client";
+import { PrismaClient } from "@prisma/client"
 import { Kafka } from "kafkajs";
 
 const TOPIC_NAME = "zap-events"
  
 
-const client = new prismaClient();
+const client = new PrismaClient();
 const kafka  = new Kafka({
     clientId: 'outbox-processor',
     brokers: ['localhost:9092']
@@ -12,6 +12,9 @@ const kafka  = new Kafka({
 
 async function main(){
     while(1){
+        const producer =  kafka.producer();
+        await producer.connect();
+
         const pendingRows = await client.zapRunOutbox.findMany({
             where:{},
             take:10
