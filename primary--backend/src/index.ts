@@ -1,14 +1,15 @@
 import  express  from "express";
+import { userRouter } from "./router/user";
+import { zapRouter } from "./router/zap";
+import  cors from "cors";
+
 
 const app = express();
+app.use(express.json())
+app.use(cors())
 
-app.post("/zapier/create/zap", (req,res) => {
-    console.log("up and running")
+app.use("api/v1/user", userRouter);
 
-    
-    res.json({
-        message:"api working"
-    })
-})
+app.use("api/v1/zap", zapRouter);
 
 app.listen(3000);
