@@ -3,6 +3,9 @@ import { Router } from "express";
 import { authMiddleware } from "../middleware";
 import { signinSchema, signupSchema } from "../types/types";
 import { prismaClient } from "../db";
+import jwt from "jsonwebtoken"
+import { JWT_PASSWORD } from "../config";
+
 const router = Router();
 
 router.post("/signup", async (req, res) => {
@@ -43,12 +46,56 @@ router.post("/signup", async (req, res) => {
 
 })
 
-router.post("/signin", (req, res) => {
-    console.log("signin handler");
+router.post("/signin", async (req, res) => {
+    const body = req.body.username;
+    const parsedData = signinSchema.safeParse(body);
+
+    if (!parsedData.success) {
+        return res.status(411).json({
+            message:"Incorrect inputs"
+        })
+    }
+
+    const user = await prismaClient.user.findFirst({
+        where:{
+            email:parsedData.data.username,
+            password:parsedData.data.password
+        }
+    })
+
+    if (!user) {
+        return res.status(403).json({
+            message:"Sorry credentials are incorrect"
+        })
+    }
+
+    const token = jwt.sign({
+        id: user.id
+    },JWT_PASSWORD)
+
+    res.json({
+        token: token,
+    });
+
 })
 
-router.get("/user", authMiddleware, (req, res) => {
-    console.log("signup handler")
+router.get("/user", authMiddleware, async (req, res) => {
+    // @ts-ignore
+    const id = req.id;
+    const user = await prismaClient.user.findFirst({
+        where:{
+            id
+        },
+        select:{
+            name:true,
+            email:true
+        }
+    });
+
+    return res.json({
+        user
+    });
+    
 })
 
 
