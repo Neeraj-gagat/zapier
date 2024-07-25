@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import { authMiddleware } from "../middleware";
-import { signinSchema, signupSchema } from "../types/types";
+import { SigninSchema, SignupSchema } from "../types/types";
 import { prismaClient } from "../db";
 import jwt from "jsonwebtoken"
 import { JWT_PASSWORD } from "../config";
@@ -9,46 +9,48 @@ import { JWT_PASSWORD } from "../config";
 const router = Router();
 
 router.post("/signup", async (req, res) => {
-    const body = req.body.username;
-    const parsedData = signupSchema.safeParse(body);
+    const body = req.body;
+    const parsedData = SignupSchema.safeParse(body);
 
     if (!parsedData.success) {
+        console.log(parsedData.error);
         return res.status(411).json({
-            message:"Incorrect inputs"
+            message: "Incorrect inputs"
         })
     }
 
     const userExists = await prismaClient.user.findFirst({
         where: {
-            email:parsedData.data.username
+            email: parsedData.data.email
         }
-    })
+    });
 
     if (userExists) {
         return res.status(403).json({
-            message:"User already exists"
+            message: "User already exists"
         })
     }
 
     await prismaClient.user.create({
         data: {
-            email: parsedData.data.username,
-            password:parsedData.data.password,
-            name:parsedData.data.name
+            email: parsedData.data.email,
+            // TODO: Dont store passwords in plaintext, hash it
+            password: parsedData.data.password,
+            name: parsedData.data.name
         }
     })
 
-    // send email logic
+    // await sendEmail();
 
     return res.json({
-        message:"Please verify account"
-    })
+        message: "Please verify your account by checking your email"
+    });
 
 })
 
 router.post("/signin", async (req, res) => {
-    const body = req.body.username;
-    const parsedData = signinSchema.safeParse(body);
+    const body = req.body;
+    const parsedData = SigninSchema.safeParse(body);
 
     if (!parsedData.success) {
         return res.status(411).json({
@@ -58,7 +60,7 @@ router.post("/signin", async (req, res) => {
 
     const user = await prismaClient.user.findFirst({
         where:{
-            email:parsedData.data.username,
+            email:parsedData.data.email,
             password:parsedData.data.password
         }
     })
