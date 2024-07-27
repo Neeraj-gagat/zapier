@@ -25,7 +25,7 @@ export const Hero = () => {
                 </div>
             </div>
         </div>
-        <div className="flex justify-center pt-8">
+        <div className="flex justify-center pt-12">
                 <Feature title={"Free Forever"} subtitle={"for core features"}/>
                 <Feature title={"More apps"} subtitle={"than any other platform"}/>
                 <Feature title={"Cutting-edge"} subtitle={"Ai features"}/>
