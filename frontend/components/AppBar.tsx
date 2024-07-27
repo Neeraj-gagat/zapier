@@ -21,7 +21,7 @@ export const AppBar = () => {
             <PrimaryButton onClick={() => {
                 router.push("/signup")
             }}>
-                Signup
+                Sign up
             </PrimaryButton>
         </div>
     </div>
