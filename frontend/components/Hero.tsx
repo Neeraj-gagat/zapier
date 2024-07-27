@@ -1,6 +1,7 @@
 "use client"
 import { PrimaryButton } from "./buttons/PrimaryButton"
 import { SecondaryButton } from "./buttons/SecondaryButton"
+import { Feature } from "./Feature"
 
 export const Hero = () => {
     return <div>
@@ -23,6 +24,11 @@ export const Hero = () => {
                     </SecondaryButton>
                 </div>
             </div>
+        </div>
+        <div className="flex justify-center pt-8">
+                <Feature title={"Free Forever"} subtitle={"for core features"}/>
+                <Feature title={"More apps"} subtitle={"than any other platform"}/>
+                <Feature title={"Cutting-edge"} subtitle={"Ai features"}/>
         </div>
     </div>
     
