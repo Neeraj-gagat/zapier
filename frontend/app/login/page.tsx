@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 export default function() {
     const router = useRouter();
     
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -30,22 +29,20 @@ export default function() {
                     </div>
                 </div>
                 <div className="flex-1 space-y-8 mt-12 pt-6 pb-6  px-4 ml-10 border ">
-                <Input lable={"Name"} onChange={e => {
-                    setName(e.target.value);
-                }} type="text" placeholder="Your Name" />
+                
                 <Input lable={"Email"} onChange={e => {
                     setEmail(e.target.value);
                 }} type="text" placeholder="Your Email" />
                 <Input lable={"Password"} onChange={e => {
                     setPassword(e.target.value);
                 }} type="password" placeholder="Your Password" />
-                <PrimaryButton size="big" onClick={() => {
-                    axios.post(`${BACKEND_URL}/api/v1/user/signup`,{
+                <PrimaryButton size="big" onClick={async() => {
+                      const res = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,{
                         username: email,
-                        name: name,
                         password: password
                     });
-                    router.push("/login")
+                    localStorage.setItem("token", res.data.token);
+                    router.push("/dashboard")
                 }} children={"Get Started free"}/>
             </div>
         </div>
