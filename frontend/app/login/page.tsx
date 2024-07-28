@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function() {
     const router = useRouter();
-    
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -37,13 +37,13 @@ export default function() {
                     setPassword(e.target.value);
                 }} type="password" placeholder="Your Password" />
                 <PrimaryButton size="big" onClick={async() => {
-                      const res = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,{
-                        username: email,
-                        password: password
+                      const res = await axios.post(`${BACKEND_URL}/api/v1/user/signin`,{
+                        email: email,
+                        password,
                     });
                     localStorage.setItem("token", res.data.token);
                     router.push("/dashboard")
-                }} children={"Get Started free"}/>
+                }} children={"Log in"}/>
             </div>
         </div>
     </div>

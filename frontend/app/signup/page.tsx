@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function() {
     const router = useRouter();
-    
+
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -41,7 +41,7 @@ export default function() {
                 }} type="password" placeholder="Your Password" />
                 <PrimaryButton size="big" onClick={() => {
                     axios.post(`${BACKEND_URL}/api/v1/user/signup`,{
-                        username: email,
+                        email: email,
                         name: name,
                         password: password
                     });
