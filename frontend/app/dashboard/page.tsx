@@ -56,6 +56,7 @@ function useZaps() {
 
 export default function() {
     const { loading, zaps} = useZaps();
+    const router = useRouter();
 
     return <div>
         <AppBar/>
@@ -65,7 +66,9 @@ export default function() {
                     <div className="font-bold text-2xl">
                         My Zaps
                     </div>
-                    <DarkButton onClick={() => {}} children={"+ Create"}/>
+                    <DarkButton onClick={() => {
+                        router.push("/zap/create");
+                    }} children={"+ Create"}/>
                 </div>
             </div>
         </div>
