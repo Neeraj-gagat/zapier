@@ -79,7 +79,7 @@ export default function() {
 function ZapTable({zaps}:{zaps:Zap[]}) {
     const router = useRouter(); 
     return  <div className="max-w-screen-lg pt-10  p-8 w-full">
-            <div className="flex pb-2">
+            <div className="flex font-semibold pb-2">
                 <div className="flex-1">Name</div>
                 <div className="flex-1">Last Edit</div>
                 <div className="flex-1">Running</div>
