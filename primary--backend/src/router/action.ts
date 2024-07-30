@@ -4,9 +4,9 @@ import { prismaClient } from "../db";
 const router = Router();
 
 router.get("/available", async (req, res) => {
-    const availableACtions = await prismaClient.availableTrigger.findMany({});
+    const availableActions = await prismaClient.availableAction.findMany({});
     res.json({
-        availableACtions
+        availableActions
     })
 })
 
