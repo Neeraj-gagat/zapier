@@ -2,10 +2,12 @@
 import { BACKEND_URL } from "@/app/config";
 import { AppBar } from "@/components/AppBar";
 import { PrimaryButton } from "@/components/buttons/PrimaryButton";
+import { Input } from "@/components/Input";
 import { ZapCell } from "@/components/ZapCell";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { json } from "stream/consumers";
 
 function useAvailableTriggersAndactions() {
     const [availableActions, setAvailableActions] = useState([]);
@@ -117,6 +119,14 @@ export default function(){
 }
 
 function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(props: null | {name:string, image:string, id: string}) => void,availableItems:{id:string, name:string, image:string}[] }) {
+    const [step, setStep] = useState(0);
+    const [selectedAction, setSelectedActions] = useState<{
+        id: string;
+        name:string;
+        image?: string
+    }>();
+    const isTrigger = index === 1;
+
     return <div className="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-slate-100 bg-opacity-70 flex">
     <div className="relative p-4 w-full max-w-2xl max-h-full">
         <div className="relative bg-white rounded-lg shadow">
@@ -133,20 +143,61 @@ function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(prop
                     <span className="sr-only">Close modal</span>
                 </button>
             </div>
+                
             <div className="p-4 md:p-5 space-y-4">
-                {availableItems.map(({id, name, image}) => {
+                {JSON.stringify(selectedAction)}
+                {step === 1 && selectedAction?.id === "email" &&  <EmailSelector />}
+
+
+                {(step === 1 && selectedAction?.id === "solana") &&  <SolanaSelector />}
+
+
+                {step === 0 && <div> {availableItems.map(({id, name, image}) => {
                     return <div onClick={() => {
-                        onSelect({
-                            id,
-                            name,
-                            image
-                        })
+                        if (isTrigger) {
+                            onSelect({
+                                id,
+                                name,
+                                image
+                            })        
+                        }else {
+                            setStep(s => s + 1)
+                            setSelectedActions({
+                                id,
+                                name,
+                                // image
+                            })
+                        }
+                    
                     }} className="flex border p-4 cursor-pointer hover:bg-slate-100">
                         <img src={image} width={30} className="rounded-full"/> <div className="flex flex-col justify-center"> {name} </div>
                     </div>
-                })}
+                })}</div>}
+                
             </div>
         </div>
     </div>
 </div>
+}
+
+function EmailSelector() {
+    const [email, setEmail] = useState("");
+    const [body, setBody] = useState("");
+
+    return <div>
+        <Input lable={"To"} type={"text"} placeholder="To" onChange={(e) => setEmail(e.target.value)} ></Input>
+        <Input lable={"Body"} type={"text"} placeholder="Body" onChange={(e) => setBody(e.target.value)}></Input>
+    </div>
+}
+
+
+function SolanaSelector() {
+    const [address, setAddress] = useState("");
+    const [amount, setAmount] = useState("");
+
+    return <div>
+        <Input lable={"To"} type={"text"} placeholder="To" onChange={(e) => setAddress(e.target.value)} ></Input>
+        <Input lable={"To"} type={"text"} placeholder="To" onChange={(e) => setAmount(e.target.value)} ></Input>
+        
+    </div>
 }
