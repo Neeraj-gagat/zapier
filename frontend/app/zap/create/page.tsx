@@ -40,6 +40,7 @@ export default function(){
         availableActionName: string;
         index:number;
         image: string;
+        metadata: any;
     }[]>([]);
     const [selectedModalIndex, setSelectedModalIndex] = useState< null | number>(null);
 
@@ -52,7 +53,7 @@ export default function(){
                     "triggerMetaData": {},
                     "actions": selectedActions.map(a => ({
                         availableActionId: a.availableActionId,
-                        actionMetadata: {}
+                        actionMetadata: a.metadata
                     }))
                 }, {
                     headers:{
@@ -83,14 +84,15 @@ export default function(){
                         index: a.length + 2,
                         availableActionId: "",
                         availableActionName: "",
-                        image: ""
+                        image: "",
+                        metadata: {}
                     }])
                 }}><div className="text-2xl">
                     +
                 </div></PrimaryButton>
             </div>
         </div>
-        {selectedModalIndex && <Modal availableItems={selectedModalIndex === 1 ? availableTriggers : availableActions} onSelect={(props: null | {name:string, image:string, id: string}) => {
+        {selectedModalIndex && <Modal availableItems={selectedModalIndex === 1 ? availableTriggers : availableActions} onSelect={(props: null | {name:string, image:string, id: string, metadata:any}) => {
             if (props === null) {
                 setSelectedModalIndex(null);
                 return;                
@@ -108,7 +110,8 @@ export default function(){
                         availableActionId: props.id,
                         availableActionName: props.name,
                         index:selectedModalIndex,
-                        image:props.image
+                        image:props.image,
+                        metadata: props.metadata
                     }
                     return newActions
                 })
@@ -118,12 +121,12 @@ export default function(){
     </div>
 }
 
-function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(props: null | {name:string, image:string, id: string}) => void,availableItems:{id:string, name:string, image:string}[] }) {
+function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(props: null | {name:string, image:string, id: string, metadata: any}) => void, availableItems:{id:string, name:string, image:string}[] }) {
     const [step, setStep] = useState(0);
-    const [selectedAction, setSelectedActions] = useState<{
+    const [selectedAction, setSelectedAction] = useState<{
         id: string;
         name:string;
-        image?: string
+        image: string
     }>();
     const isTrigger = index === 1;
 
@@ -145,11 +148,21 @@ function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(prop
             </div>
                 
             <div className="p-4 md:p-5 space-y-4">
-                {JSON.stringify(selectedAction)}
-                {step === 1 && selectedAction?.id === "email" &&  <EmailSelector />}
+                {/* {JSON.stringify(selectedAction)} */}
+                {step === 1 && selectedAction?.id === "email" &&  <EmailSelector setMetaData={(metadata) => {
+                    onSelect({
+                        ...selectedAction,
+                        metadata
+                    })
+                }} />}
 
 
-                {(step === 1 && selectedAction?.id === "solana") &&  <SolanaSelector />}
+                {(step === 1 && selectedAction?.id === "send-sol") &&  <SolanaSelector setMetaData={(metadata) => {
+                    onSelect({
+                        ...selectedAction,
+                        metadata
+                    })
+                }} />}
 
 
                 {step === 0 && <div> {availableItems.map(({id, name, image}) => {
@@ -158,14 +171,15 @@ function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(prop
                             onSelect({
                                 id,
                                 name,
-                                image
+                                image,
+                                metadata: {}
                             })        
                         }else {
                             setStep(s => s + 1)
-                            setSelectedActions({
+                            setSelectedAction({
                                 id,
                                 name,
-                                // image
+                                image
                             })
                         }
                     
@@ -180,24 +194,43 @@ function Modal({ index, onSelect, availableItems}:{ index:number, onSelect:(prop
 </div>
 }
 
-function EmailSelector() {
+function EmailSelector({setMetaData}: {
+    setMetaData: (params:any) => void
+}) {
     const [email, setEmail] = useState("");
     const [body, setBody] = useState("");
 
     return <div>
         <Input lable={"To"} type={"text"} placeholder="To" onChange={(e) => setEmail(e.target.value)} ></Input>
         <Input lable={"Body"} type={"text"} placeholder="Body" onChange={(e) => setBody(e.target.value)}></Input>
+        <div className="pt-4">
+        <PrimaryButton onClick={() => {
+            setMetaData({
+                email,
+                body
+            })
+        }}>Submit</PrimaryButton>
+    </div>
     </div>
 }
 
 
-function SolanaSelector() {
+function SolanaSelector({setMetaData}: {
+    setMetaData: (params:any) => void
+}) {
     const [address, setAddress] = useState("");
     const [amount, setAmount] = useState("");
 
     return <div>
-        <Input lable={"To"} type={"text"} placeholder="To" onChange={(e) => setAddress(e.target.value)} ></Input>
-        <Input lable={"To"} type={"text"} placeholder="To" onChange={(e) => setAmount(e.target.value)} ></Input>
-        
+        <Input lable={"Address"} type={"text"} placeholder="To" onChange={(e) => setAddress(e.target.value)} ></Input>
+        <Input lable={"Amount"} type={"text"} placeholder="To" onChange={(e) => setAmount(e.target.value)} ></Input>
+        <div className="pt-4">
+        <PrimaryButton onClick={() => {
+            setMetaData({
+                amount,
+                address
+            })
+        }}>Submit</PrimaryButton>
+    </div>
     </div>
 }

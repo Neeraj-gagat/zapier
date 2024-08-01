@@ -12,11 +12,11 @@ export const ZapCell = ({
 }) => {
     return <div onClick={onClick} className="border border-black py-8 px-8 cursor-pointer w-[400px] flex justify-center max-w-md">
         <div className=" flex text-xl">
+            <div className="">
+            <img className=" flex justify-center" width={30} src={image} />
+            </div>
             <div className="font-bold">
             {index}.
-            </div>
-            <div>
-            <img className=" flex justify-center" width={30} src={image} />
             </div>
             <div>
             { name}
