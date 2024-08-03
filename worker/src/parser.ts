@@ -4,7 +4,7 @@ export function parse(text: string, value:any, startDelimeter = "{", endDelemete
     let endIndex  = 1;
 
     let  finalString = "";
-    while (endIndex != text.length) {
+    while (endIndex < text.length) {
         if (text[startIndex] === startDelimeter) {
             let endPoint = startIndex + 2;
             while (text[endPoint] !== endDelemeter) {
